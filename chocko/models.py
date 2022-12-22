@@ -29,3 +29,4 @@ class Movie(models.Model):
     image = models.URLField(blank=True)
     trailer = models.URLField(blank=True)
     time = models.IntegerField()
+    content_rating = models.CharField(max_length=20, default="بدون محدودیت")

@@ -19,3 +19,4 @@ class MovieDetailSerializer(serializers.Serializer):
     image = serializers.URLField()
     trailer = serializers.URLField()
     runtimeMins = serializers.CharField()
+    contentRating = serializers.CharField()
