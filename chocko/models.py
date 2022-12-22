@@ -5,6 +5,8 @@ from django.db import models
 class Actor(models.Model):
     actorid = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=50)
+    summary = models.TextField(null=True)
+    birth_date = models.DateField(null=True)
     image = models.URLField()
 
 class Company(models.Model):
@@ -21,9 +23,9 @@ class Movie(models.Model):
     full_title = models.CharField(max_length=100)
     release_date = models.DateField()
     plot = models.TextField()
-    actors = models.ManyToManyField(Actor, blank=True)
-    genres = models.ManyToManyField(Category, blank=True)
-    companies = models.ManyToManyField(Company, blank=True)
+    actors = models.ManyToManyField(Actor, blank=True, related_name='works')
+    genres = models.ManyToManyField(Category, blank=True, related_name='items')
+    companies = models.ManyToManyField(Company, blank=True, related_name='works')
     country = models.CharField(max_length=100)
     imdb_rating = models.DecimalField(max_digits=2, decimal_places=1)
     image = models.URLField(blank=True)
