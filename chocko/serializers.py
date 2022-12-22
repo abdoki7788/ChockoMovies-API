@@ -5,6 +5,11 @@ import requests
 class MovieIdSerializer(serializers.Serializer):
     movie_id = serializers.CharField()
 
+class MovieCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = '__all__'
+
 class MovieDetailSerializer(serializers.Serializer):
     id = serializers.CharField(max_length=20)
     title = serializers.CharField(max_length=50)
