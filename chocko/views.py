@@ -2,8 +2,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, MovieCreateSerializer
-from .models import Movie
+from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, MovieCreateSerializer, GenreSerializer
+from .models import Movie, Genre
 from .permissions import IsAdminOrReadOnly
 from utils.api_calls import get_movie_by_id
 
@@ -34,3 +34,8 @@ class MovieViewSet(ModelViewSet):
             return MovieCreateSerializer
         else:
             return MovieSerializer
+
+class GenreViewSet(ModelViewSet):
+    queryset = Genre.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = GenreSerializer

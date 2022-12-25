@@ -1,31 +1,36 @@
 from rest_framework import serializers
 from .models import Movie, Actor, Genre
 
+class GenreSerializer(serializers.ModelSerializer):
+    key = serializers.CharField(source='name')
+    value = serializers.CharField(source='display_name')
+
+    class Meta:
+        model = Genre
+        fields = ['key', 'value']
+
 class MovieIdSerializer(serializers.Serializer):
     movie_id = serializers.CharField()
 
 class MovieSerializer(serializers.ModelSerializer):
+    genres = GenreSerializer(many=True)
     class Meta:
         model = Movie
         fields = '__all__'
 
-class MovieCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Movie
-        fields = '__all__'
+class MovieCreateSerializer(MovieSerializer):
     
-    def is_valid(self, *, raise_exception=False):
-        genres = self.initial_data['genres']
+    def save(self, **kwargs):
+        genres = self.validated_data['genres']
         genre_list = []
         for genre in genres:
             try:
-                obj = Genre.objects.get(name=genre['key'], display_name=genre['value'])
+                obj = Genre.objects.get(**dict(genre))
             except Genre.DoesNotExist:
-                obj = Genre.objects.create(name=genre['key'], display_name=genre['value'])
-            print(obj.id)
-            genre_list.append(obj.id)
-        self.initial_data['genres'] = genre_list
-        return super().is_valid(raise_exception=raise_exception)
+                obj = Genre.objects.create(**dict(genre))
+            genre_list.append(obj)
+        self.validated_data['genres'] = genre_list
+        return super().save(**kwargs)
 
 class MovieDetailSerializer(serializers.Serializer):
     id = serializers.CharField(max_length=20)
