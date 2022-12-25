@@ -20,8 +20,9 @@ class Company(models.Model):
             self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
 
-class Category(models.Model):
-    name = models.CharField(max_length=50)
+class Genre(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    display_name = models.CharField(max_length=50, blank=True)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
