@@ -17,7 +17,7 @@ class Company(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
 class Genre(models.Model):
@@ -27,7 +27,7 @@ class Genre(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
 class Movie(models.Model):
