@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from .models import Movie
-import requests
+from .models import Movie, Actor
 
 class MovieIdSerializer(serializers.Serializer):
     movie_id = serializers.CharField()
 
-class MovieCreateSerializer(serializers.ModelSerializer):
+class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = '__all__'
@@ -25,3 +24,8 @@ class MovieDetailSerializer(serializers.Serializer):
     trailer = serializers.URLField()
     runtimeMins = serializers.CharField()
     contentRating = serializers.CharField()
+
+class ActorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actor
+        fields = '__all__'
