@@ -37,7 +37,7 @@ class Movie(models.Model):
     release_date = models.DateField()
     plot = models.TextField()
     actors = models.ManyToManyField(Actor, blank=True, related_name='works')
-    genres = models.ManyToManyField(Category, blank=True, related_name='items')
+    genres = models.ManyToManyField(Genre, blank=True, related_name='items')
     companies = models.ManyToManyField(Company, blank=True, related_name='works')
     country = models.CharField(max_length=100)
     imdb_rating = models.DecimalField(max_digits=2, decimal_places=1)
