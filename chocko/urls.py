@@ -4,6 +4,7 @@ from . import views
 
 router = routers.SimpleRouter()
 router.register(r'movies', views.MovieViewSet)
+router.register(r'genres', views.GenreViewSet)
 
 
 urlpatterns = [
