@@ -29,6 +29,7 @@ class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = MovieSerializer
+    filterset_fields = ['genres', 'actors', 'country', 'companies']
 
 class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.all()
@@ -39,3 +40,4 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [IsAuthorOrReadOnly]
     serializer_class = CommentSerializer
+    filterset_fields = ['target']
