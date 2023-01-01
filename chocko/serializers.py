@@ -17,8 +17,6 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = '__all__'
-
-class MovieCreateSerializer(MovieSerializer):
     
     def save(self, **kwargs):
         genres = self.validated_data['genres']
