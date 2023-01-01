@@ -61,3 +61,7 @@ class Comment(models.Model):
 
     def get_likes_count(self):
         return self.likes.count()
+
+class Group(models.Model):
+    title = models.CharField(max_length=50)
+    items = models.ManyToManyField(Movie, related_name='added_groups')

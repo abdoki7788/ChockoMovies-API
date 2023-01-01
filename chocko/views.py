@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer
-from .models import Movie, Genre, Comment
+from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer
+from .models import Movie, Genre, Comment, Group
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from utils.api_calls import get_movie_by_id
 
@@ -71,3 +71,8 @@ class CommentViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
+
+class GroupViewSet(ModelViewSet):
+    queryset = Group.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = GroupSerializer
