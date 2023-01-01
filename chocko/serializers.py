@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Movie, Actor, Genre, Comment
 
-class GenreSerializer(serializers.ModelSerializer):
+class MovieGenreSerializer(serializers.ModelSerializer):
     key = serializers.CharField(source='name')
     value = serializers.CharField(source='display_name')
 
@@ -13,7 +13,7 @@ class MovieIdSerializer(serializers.Serializer):
     movie_id = serializers.CharField()
 
 class MovieSerializer(serializers.ModelSerializer):
-    genres = GenreSerializer(many=True)
+    genres = MovieGenreSerializer(many=True)
     class Meta:
         model = Movie
         fields = '__all__'
@@ -29,6 +29,12 @@ class MovieSerializer(serializers.ModelSerializer):
             genre_list.append(obj)
         self.validated_data['genres'] = genre_list
         return super().save(**kwargs)
+
+class MovieListSerializer(serializers.ModelSerializer):
+    genres = serializers.StringRelatedField(many=True, read_only=True)
+    class Meta:
+        model = Movie
+        fields = ['movieid', 'title', 'release_date', 'genres', 'image', 'imdb_rating']
 
 class MovieDetailSerializer(serializers.Serializer):
     id = serializers.CharField(max_length=20)
@@ -57,3 +63,11 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['id','author', 'target', 'content', 'send_date', 'likes_count']
         extra_kwargs = {'author': {'read_only': True}, 'target': {'required': False}}
+
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    items = MovieListSerializer(many=True, read_only=True)
+    class Meta:
+        model = Genre
+        fields = ['name', 'display_name', 'items']
