@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer
 from .models import Movie, Genre, Comment
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
@@ -30,7 +32,10 @@ class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = MovieSerializer
+    filter_backends = [SearchFilter ,DjangoFilterBackend, OrderingFilter]
+    search_fields = ['title', 'full_title']
     filterset_fields = ['genres', 'actors', 'country', 'companies']
+    ordering_fields = ['realease_date', 'imdb_rating']
 
     @action(methods=['GET', 'POST'], detail=True)
     def comments(self, request, pk):
@@ -58,7 +63,7 @@ class CommentViewSet(ModelViewSet):
     permission_classes = [IsAuthorOrReadOnly]
     serializer_class = CommentSerializer
     filterset_fields = ['target']
-
+    ordering = ['send_date']
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
