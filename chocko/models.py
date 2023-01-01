@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils.text import slugify
 from django.template.defaultfilters import slugify
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 # Create your models here.
 
@@ -45,3 +48,12 @@ class Movie(models.Model):
     trailer = models.URLField(blank=True)
     time = models.IntegerField()
     content_rating = models.CharField(max_length=20, default="بدون محدودیت")
+
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    target = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    content = models.TextField()
+    likes = models.ManyToManyField(User, blank=True, related_name='liked_comments')
+
+    def get_likes_count(self):
+        return self.likes.count()
