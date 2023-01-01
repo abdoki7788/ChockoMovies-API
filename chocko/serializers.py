@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Actor, Genre
+from .models import Movie, Actor, Genre, Comment
 
 class GenreSerializer(serializers.ModelSerializer):
     key = serializers.CharField(source='name')
@@ -50,3 +50,9 @@ class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
         fields = '__all__'
+
+class CommentSerializer(serializers.ModelSerializer):
+    likes_count = serializers.IntegerField(source='get_likes_count')
+    class Meta:
+        model = Comment
+        fields = ['author', 'target', 'content', 'send_date', 'likes_count']

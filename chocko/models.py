@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
+from datetime import datetime
 
 User = get_user_model()
 
@@ -54,6 +55,7 @@ class Comment(models.Model):
     target = models.ForeignKey(Movie, on_delete=models.CASCADE)
     content = models.TextField()
     likes = models.ManyToManyField(User, blank=True, related_name='liked_comments')
+    send_date = models.DateTimeField(auto_now_add=True)
 
     def get_likes_count(self):
         return self.likes.count()
