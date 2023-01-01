@@ -51,8 +51,8 @@ class Movie(models.Model):
     content_rating = models.CharField(max_length=20, default="بدون محدودیت")
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    target = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    target = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField()
     likes = models.ManyToManyField(User, blank=True, related_name='liked_comments')
     send_date = models.DateTimeField(auto_now_add=True)

@@ -52,7 +52,8 @@ class ActorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
-    likes_count = serializers.IntegerField(source='get_likes_count')
+    likes_count = serializers.IntegerField(source='get_likes_count', read_only=True)
     class Meta:
         model = Comment
-        fields = ['author', 'target', 'content', 'send_date', 'likes_count']
+        fields = ['id','author', 'target', 'content', 'send_date', 'likes_count']
+        extra_kwargs = {'author': {'read_only': True}, 'target': {'read_only': True}}

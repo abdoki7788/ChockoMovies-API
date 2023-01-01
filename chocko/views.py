@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer
@@ -30,6 +31,22 @@ class MovieViewSet(ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = MovieSerializer
     filterset_fields = ['genres', 'actors', 'country', 'companies']
+
+    @action(methods=['GET', 'POST'], detail=True)
+    def comments(self, request, pk):
+        obj = self.get_object()
+        if request.method.lower() == 'get':
+            return Response(CommentSerializer(obj.comments, many=True).data)
+        else:
+            if request.user.is_authenticated:
+                serialized_data = CommentSerializer(data=request.data)
+                if serialized_data.is_valid():
+                    serialized_data.validated_data['author'] = request.user
+                    serialized_data.validated_data['target'] = obj
+                    serialized_data.save()
+                    return Response(serialized_data.data)
+                else:
+                    return Response(serialized_data.errors)
 
 class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.all()
