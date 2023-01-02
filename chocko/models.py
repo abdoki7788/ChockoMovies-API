@@ -65,3 +65,9 @@ class Comment(models.Model):
 class Group(models.Model):
     title = models.CharField(max_length=50)
     items = models.ManyToManyField(Movie, related_name='added_groups')
+
+
+class Ticket(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    content = models.TextField()
