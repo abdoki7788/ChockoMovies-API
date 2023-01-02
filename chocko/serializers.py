@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Actor, Genre, Comment, Group
+from .models import Movie, Actor, Genre, Comment, Group, Ticket
 
 class MovieGenreSerializer(serializers.ModelSerializer):
     key = serializers.CharField(source='name')
@@ -76,4 +76,10 @@ class GroupSerializer(serializers.ModelSerializer):
     items = MovieListSerializer(many=True)
     class Meta:
         model = Group
+        fields = '__all__'
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
         fields = '__all__'
