@@ -10,7 +10,8 @@ router.register(r'groups', views.GroupViewSet)
 
 
 urlpatterns = [
-    path('movie-detail', views.GetMovieData.as_view()),
+    path('movie-detail', views.GetMovieData.as_view(), name='movie-detail'),
+    path('tickets', views.TicketView.as_view(), name='tickets'),
 ]
 
 urlpatterns += router.urls

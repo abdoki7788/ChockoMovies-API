@@ -1,13 +1,14 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer
-from .models import Movie, Genre, Comment, Group
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer
+from .models import Movie, Genre, Comment, Group, Ticket
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
 
 
@@ -76,3 +77,8 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = GroupSerializer
+
+class TicketView(ListCreateAPIView):
+    queryset = Ticket.objects.all()
+    permission_classes = [IsAdminOrCreateOnly]
+    serializer_class = TicketSerializer
