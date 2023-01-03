@@ -11,9 +11,10 @@ User = get_user_model()
 class Actor(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    summary = models.TextField(null=True)
-    birth_date = models.DateField(null=True)
     image = models.URLField()
+
+    def __str__(self) -> str:
+        return self.name
 
 class Company(models.Model):
     name = models.CharField(max_length=50)
@@ -23,6 +24,9 @@ class Company(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
+    
+    def __str__(self) -> str:
+        return self.name
 
 class Genre(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -36,10 +40,18 @@ class Genre(models.Model):
     
     def __str__(self):
         return self.display_name
+
+class MovieType(models.Model):
+    name = models.CharField(max_length=50)
+    
+    def __str__(self) -> str:
+        return self.name
+
 class Movie(models.Model):
     movieid = models.CharField(max_length=20, primary_key=True)
     title = models.CharField(max_length=50)
     full_title = models.CharField(max_length=100)
+    type = models.ForeignKey(MovieType, on_delete=models.SET_NULL, null=True)
     release_date = models.DateField()
     plot = models.TextField()
     actors = models.ManyToManyField(Actor, blank=True, related_name='works')
@@ -52,6 +64,9 @@ class Movie(models.Model):
     time = models.IntegerField()
     content_rating = models.CharField(max_length=20, default="بدون محدودیت")
 
+    def __str__(self) -> str:
+        return self.full_title
+
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     target = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='comments')
@@ -61,13 +76,23 @@ class Comment(models.Model):
 
     def get_likes_count(self):
         return self.likes.count()
+    
+    def __str__(self) -> str:
+        return f'{self.author.username} on {self.target.movieid} at {self.send_date}'
 
 class Group(models.Model):
     title = models.CharField(max_length=50)
     items = models.ManyToManyField(Movie, related_name='added_groups')
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Ticket(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField()
     content = models.TextField()
+    send_date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f'by "{self.name}" at {self.send_date}'
