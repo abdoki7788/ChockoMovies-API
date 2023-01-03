@@ -47,11 +47,17 @@ class MovieType(models.Model):
     def __str__(self) -> str:
         return self.name
 
+class ContentRating(models.Model):
+    rating = models.CharField(max_length=50)
+    
+    def __str__(self) -> str:
+        return self.rating    
+
 class Movie(models.Model):
     movieid = models.CharField(max_length=20, primary_key=True)
     title = models.CharField(max_length=50)
     full_title = models.CharField(max_length=100)
-    type = models.ForeignKey(MovieType, on_delete=models.SET_NULL, null=True)
+    type = models.ForeignKey(MovieType, on_delete=models.SET_NULL, null=True, related_name='items')
     release_date = models.DateField()
     plot = models.TextField()
     actors = models.ManyToManyField(Actor, blank=True, related_name='works')
@@ -62,7 +68,7 @@ class Movie(models.Model):
     image = models.URLField(blank=True)
     trailer = models.URLField(blank=True)
     time = models.IntegerField()
-    content_rating = models.CharField(max_length=20, default="بدون محدودیت")
+    content_rating = models.ForeignKey(ContentRating, related_name='movies', on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
         return self.full_title
