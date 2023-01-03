@@ -51,7 +51,17 @@ class ContentRating(models.Model):
     rating = models.CharField(max_length=50)
     
     def __str__(self) -> str:
-        return self.rating    
+        return self.rating
+
+
+class Country(models.Model):
+    name = models.CharField(max_length=50)
+    display_name = models.CharField(max_length=60, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.display_name:
+            self.display_name = self.name
+        return super().save(*args, **kwargs)
 
 class Movie(models.Model):
     movieid = models.CharField(max_length=20, primary_key=True)
@@ -63,7 +73,7 @@ class Movie(models.Model):
     actors = models.ManyToManyField(Actor, blank=True, related_name='works')
     genres = models.ManyToManyField(Genre, blank=True, related_name='items')
     companies = models.ManyToManyField(Company, blank=True, related_name='works')
-    country = models.CharField(max_length=100)
+    countries = models.ManyToManyField(Country, blank=True, related_name='items')
     imdb_rating = models.DecimalField(max_digits=2, decimal_places=1)
     image = models.URLField(blank=True)
     trailer = models.URLField(blank=True)
