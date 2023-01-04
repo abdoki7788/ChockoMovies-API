@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Actor, Genre, Comment, Group, Ticket
+from .models import Movie, Actor, Genre, Comment, Group, Ticket, Country
 
 class MovieGenreSerializer(serializers.ModelSerializer):
     key = serializers.CharField(source='name')
@@ -83,3 +83,9 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = '__all__'
+
+class CountrySerializer(serializers.ModelSerializer):
+    items = MovieListSerializer(many=True)
+    class Meta:
+        model = Country
+        fields = ['id', 'name', 'display_name', 'items']

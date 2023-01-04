@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer
-from .models import Movie, Genre, Comment, Group, Ticket
+from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer
+from .models import Movie, Genre, Comment, Group, Ticket, Country
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
 
@@ -35,7 +35,7 @@ class MovieViewSet(ModelViewSet):
     serializer_class = MovieSerializer
     filter_backends = [SearchFilter ,DjangoFilterBackend, OrderingFilter]
     search_fields = ['title', 'full_title']
-    filterset_fields = ['genres', 'actors', 'country', 'companies']
+    filterset_fields = ['genres', 'actors', 'countries', 'companies']
     ordering_fields = ['realease_date', 'imdb_rating']
 
     @action(methods=['GET', 'POST'], detail=True)
@@ -82,3 +82,9 @@ class TicketView(ListCreateAPIView):
     queryset = Ticket.objects.all()
     permission_classes = [IsAdminOrCreateOnly]
     serializer_class = TicketSerializer
+
+
+class CountryViewSet(ModelViewSet):
+    queryset = Country.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = CountrySerializer
