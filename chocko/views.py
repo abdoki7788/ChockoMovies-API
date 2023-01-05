@@ -6,28 +6,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer
+from .serializers import MovieIdSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer
 from .models import Movie, Genre, Comment, Group, Ticket, Country
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
-
-
-class GetMovieData(APIView):
-    def post(self, request):
-        serializer = MovieIdSerializer(data=request.data)
-        if serializer.is_valid():
-            id = serializer.data['movie_id']
-            data = get_movie_by_id(id)
-            data['plot'] = data['plotLocal']
-            data["trailer"] = data["trailer"]["link"]
-            obj = MovieDetailSerializer(data=data)
-            if obj.is_valid():
-                return Response(obj.data)
-            else:
-                return Response(obj.errors)
-        else:
-            return Response(serializer.errors)
-
 
 class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all()
@@ -42,6 +24,11 @@ class MovieViewSet(ModelViewSet):
         if self.action in ['save', 'unsave', 'comments']:
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action == 'imdb_create':
+            self.serializer_class = MovieIdSerializer
+        return super().get_serializer_class(*args, **kwargs)
 
     @action(methods=['GET', 'POST'], detail=True)
     def comments(self, request, pk):
@@ -71,6 +58,15 @@ class MovieViewSet(ModelViewSet):
         obj.saves.remove(request.user)
         obj.save()
         return Response({'datail': 'successfuly unsaved'})
+    
+    @action(methods=['post'], detail=False)
+    def imdb_create(self, request):
+        seralized_data = self.get_serializer_class()(data=request.data)
+        if seralized_data.is_valid():
+            return Response(seralized_data.data)
+        else:
+            return Response(seralized_data.errors)
+
 
 class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.all()

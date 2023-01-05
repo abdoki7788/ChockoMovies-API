@@ -10,7 +10,7 @@ class MovieGenreSerializer(serializers.ModelSerializer):
         fields = ['key', 'value']
 
 class MovieIdSerializer(serializers.Serializer):
-    movie_id = serializers.CharField()
+    id = serializers.CharField()
 
 class MovieSerializer(serializers.ModelSerializer):
     genres = MovieGenreSerializer(many=True)
