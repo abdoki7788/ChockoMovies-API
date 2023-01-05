@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import MovieIdSerializer, MovieDetailSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer
@@ -38,21 +38,39 @@ class MovieViewSet(ModelViewSet):
     filterset_fields = ['genres', 'actors', 'countries', 'companies']
     ordering_fields = ['realease_date', 'imdb_rating']
 
+    def get_permissions(self):
+        if self.action in ['save', 'unsave', 'comments']:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
     @action(methods=['GET', 'POST'], detail=True)
     def comments(self, request, pk):
         obj = self.get_object()
         if request.method.lower() == 'get':
             return Response(CommentSerializer(obj.comments, many=True).data)
         else:
-            if request.user.is_authenticated:
-                serialized_data = CommentSerializer(data=request.data)
-                if serialized_data.is_valid():
-                    serialized_data.validated_data['author'] = request.user
-                    serialized_data.validated_data['target'] = obj
-                    serialized_data.save()
-                    return Response(serialized_data.data)
-                else:
-                    return Response(serialized_data.errors)
+            serialized_data = CommentSerializer(data=request.data)
+            if serialized_data.is_valid():
+                serialized_data.validated_data['author'] = request.user
+                serialized_data.validated_data['target'] = obj
+                serialized_data.save()
+                return Response(serialized_data.data)
+            else:
+                return Response(serialized_data.errors)
+    
+    @action(methods=['post'], detail=True)
+    def save(self, request, id):
+        obj = self.get_object()
+        obj.saves.add(request.user)
+        obj.save()
+        return Response({'datail': 'successfuly saved'})
+    
+    @action(methods=['post'], detail=True)
+    def unsave(self, request, id):
+        obj = self.get_object()
+        obj.saves.remove(request.user)
+        obj.save()
+        return Response({'datail': 'successfuly unsaved'})
 
 class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.all()
