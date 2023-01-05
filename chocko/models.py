@@ -1,12 +1,11 @@
 from django.db import models
 from django.utils.text import slugify
-from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
 from datetime import datetime
 
-User = get_user_model()
-
 # Create your models here.
+
+User = get_user_model()
 
 class Actor(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
@@ -79,9 +78,11 @@ class Movie(models.Model):
     trailer = models.URLField(blank=True)
     time = models.IntegerField()
     content_rating = models.ForeignKey(ContentRating, related_name='movies', on_delete=models.SET_NULL, null=True)
+    saves = models.ManyToManyField(User, blank=True, related_name='saved_movies')
 
     def __str__(self) -> str:
         return self.full_title
+
 
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
