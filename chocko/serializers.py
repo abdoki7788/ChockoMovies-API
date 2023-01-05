@@ -45,7 +45,7 @@ class MovieDetailSerializer(serializers.Serializer):
     actorList = serializers.ListField()
     genreList = serializers.ListField()
     companyList = serializers.ListField()
-    countries = serializers.CharField()
+    countryList = serializers.ListField()
     imDbRating = serializers.CharField(max_length=4)
     image = serializers.URLField()
     trailer = serializers.URLField()

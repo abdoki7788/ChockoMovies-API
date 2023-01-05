@@ -15,14 +15,17 @@ class Actor(models.Model):
     def __str__(self) -> str:
         return self.name
 
-class Company(models.Model):
+class Director(models.Model):
+    id = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True)
+    image = models.URLField()
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
+    def __str__(self) -> str:
+        return self.name
+
+class Company(models.Model):
+    id = models.CharField(max_length=20, primary_key=True)
+    name = models.CharField(max_length=50)
     
     def __str__(self) -> str:
         return self.name
@@ -63,20 +66,24 @@ class Country(models.Model):
         return super().save(*args, **kwargs)
 
 class Movie(models.Model):
-    movieid = models.CharField(max_length=20, primary_key=True)
+    id = models.CharField(max_length=20, primary_key=True)
     title = models.CharField(max_length=50)
     full_title = models.CharField(max_length=100)
     type = models.ForeignKey(MovieType, on_delete=models.SET_NULL, null=True, related_name='items')
     release_date = models.DateField()
     plot = models.TextField()
+    stars = models.ManyToManyField(Actor, blank=True)
     actors = models.ManyToManyField(Actor, blank=True, related_name='works')
     genres = models.ManyToManyField(Genre, blank=True, related_name='items')
     companies = models.ManyToManyField(Company, blank=True, related_name='works')
     countries = models.ManyToManyField(Country, blank=True, related_name='items')
+    director = models.ManyToManyField(Director, blank=True, related_name='works')
     imdb_rating = models.DecimalField(max_digits=2, decimal_places=1)
+    votes_count = models.IntegerField(blank=True, null=True)
     image = models.URLField(blank=True)
     trailer = models.URLField(blank=True)
     time = models.IntegerField()
+    timeString = models.CharField(max_length=20, null=True, blank=True)
     content_rating = models.ForeignKey(ContentRating, related_name='movies', on_delete=models.SET_NULL, null=True)
     saves = models.ManyToManyField(User, blank=True, related_name='saved_movies')
 
