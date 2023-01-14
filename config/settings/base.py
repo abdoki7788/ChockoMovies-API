@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'django_filters',
     "djoser",
+    'drf_yasg',
 
     "chocko.apps.ChockoConfig",
     "accounts.apps.AccountsConfig",

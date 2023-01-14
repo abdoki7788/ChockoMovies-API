@@ -23,7 +23,7 @@ class CustomUserViewSet(UserViewSet):
         return Response(serialized_data.data)
     
     @action(methods=['get'], detail=False, url_path='me/saved_movies')
-    def saved_movies(self, request):
+    def my_saved_movies(self, request):
         obj = request.user.saved_movies
         serialized_data = MovieListSerializer(obj, many=True)
         return Response(serialized_data.data)
