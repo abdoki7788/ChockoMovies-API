@@ -140,3 +140,11 @@ class Ticket(models.Model):
     
     def __str__(self) -> str:
         return f'by "{self.name}" at {self.send_date}'
+
+class Request(models.Model):
+    TYPE_CHOICES = (('S', 'serie'), ('M', 'movie'))
+    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES, default='M')
+    name = models.CharField(max_length=50)
+    imdb_id = models.CharField(max_length=20, null=True)
+    plot = models.TextField(null=True)

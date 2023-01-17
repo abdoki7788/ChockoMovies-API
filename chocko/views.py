@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import MovieIdSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer
-from .models import Movie, Genre, Comment, Group, Ticket, Country
+from .serializers import MovieIdSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer
+from .models import Movie, Genre, Comment, Group, Ticket, Country, Request
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
 
@@ -104,6 +104,20 @@ class TicketView(ListCreateAPIView):
     queryset = Ticket.objects.all()
     permission_classes = [IsAdminOrCreateOnly]
     serializer_class = TicketSerializer
+
+
+class ResquestView(ListCreateAPIView):
+    queryset = Request.objects.all()
+    permission_classes = [IsAdminOrCreateOnly]
+    serializer_class = RequestSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['sender'] = request.user
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
 
 class CountryViewSet(ModelViewSet):

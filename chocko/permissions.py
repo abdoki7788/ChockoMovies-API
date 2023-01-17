@@ -22,3 +22,9 @@ class IsAdminOrCreateOnly(BasePermission):
         if request.method not in SAFE_METHODS or (request.user.is_authenticated and request.user.is_superuser):
             return True
         return False
+
+class IsAdminOrAuthenticatedCreateOnly(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated and (request.method not in SAFE_METHODS or request.user.is_superuser):
+            return True
+        return False
