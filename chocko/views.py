@@ -63,11 +63,15 @@ class MovieViewSet(ModelViewSet):
     def imdb_create(self, request):
         seralized_data = self.get_serializer_class()(data=request.data)
         if seralized_data.is_valid():
-            response = get_movie_by_id(seralized_data.data['id'])
-            if response['errorMessage'] != '':
-                return Response({'detail': 'there is a problem . please check the id and try again'}, status=400)
-            print(response)
-            return Response(seralized_data.data)
+            try:
+                response = get_movie_by_id(seralized_data.data['id'])
+                if response['errorMessage']:
+                    err = response['errorMessage']
+                    return Response({'detail': f'there is a problem :{ err }'}, status=400)
+                print(response)
+                return Response(seralized_data.data)
+            except:
+                return Response({"something is wrong. "}, status=500)
         else:
             return Response(seralized_data.errors)
 
