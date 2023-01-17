@@ -60,36 +60,15 @@ class Country(models.Model):
             self.display_name = self.name
         return super().save(*args, **kwargs)
 
-class Serie(models.Model):
-    id = models.CharField(max_length=20, primary_key=True)
-    title = models.CharField(max_length=50)
-    full_title = models.CharField(max_length=100)
-    release_date = models.DateField()
-    plot = models.TextField()
-    stars = models.ManyToManyField(Actor, blank=True)
-    actors = models.ManyToManyField(Actor, blank=True, related_name='series')
-    genres = models.ManyToManyField(Genre, blank=True, related_name='serie_items')
-    companies = models.ManyToManyField(Company, blank=True, related_name='series')
-    countries = models.ManyToManyField(Country, blank=True, related_name='series')
-    director = models.ManyToManyField(Director, blank=True, related_name='series')
-    imdb_rating = models.DecimalField(max_digits=2, decimal_places=1)
-    votes_count = models.IntegerField(blank=True, null=True)
-    image = models.URLField(blank=True)
-    trailer = models.URLField(blank=True)
-    time = models.IntegerField()
-    time_string = models.CharField(max_length=20, null=True, blank=True)
-    content_rating = models.ForeignKey(ContentRating, related_name='series', on_delete=models.SET_NULL, null=True)
-    year_end = models.IntegerField(null=True)
-    saves = models.ManyToManyField(User, blank=True, related_name='saved_series')
-
-    def __str__(self):
-        return self.full_title
-
 
 class Movie(models.Model):
+    TYPE_CHOICES = (
+        ('M', 'movie'), ('S', 'serie'), ('U', 'unknown')
+    )
     id = models.CharField(max_length=20, primary_key=True)
     title = models.CharField(max_length=50)
     full_title = models.CharField(max_length=100)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES, default='U')
     release_date = models.DateField()
     plot = models.TextField()
     stars = models.ManyToManyField(Actor, blank=True)
