@@ -98,6 +98,12 @@ REST_FRAMEWORK = {
     )
 }
 
+DJOSER = {
+    'SERIALIZERS': {
+        'current_user': 'accounts.serializers.CurrentUserSerializer'
+    }
+}
+
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
@@ -127,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Tehran"
 
 USE_I18N = True
 

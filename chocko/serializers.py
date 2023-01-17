@@ -34,7 +34,11 @@ class MovieListSerializer(serializers.ModelSerializer):
     genres = serializers.StringRelatedField(many=True, read_only=True)
     class Meta:
         model = Movie
-        fields = ['id', 'title', 'release_date', 'genres', 'image', 'imdb_rating']
+        fields = ['id', 'title', 'plot', 'release_date', 'genres', 'image', 'imdb_rating']
+
+class SerieListSerializer(MovieListSerializer):
+    class Meta(MovieListSerializer.Meta):
+        fields = ['id', 'title', 'plot', 'release_date', 'genres', 'image', 'imdb_rating', 'year_end']
 
 class MovieDetailSerializer(serializers.Serializer):
     id = serializers.CharField(max_length=20)
