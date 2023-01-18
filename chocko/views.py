@@ -101,7 +101,7 @@ class MovieViewSet(ModelViewSet):
                     "votes_count":response['imDbRatingVotes'],
                     "image":response['image'],
                     "trailer":response['trailer']['linkEmbed'] if not response['trailer']['errorMessage'] else None,
-                    "content_rating": ContentRating.objects.get_or_create(rating=response['contentRating'])[0].id,
+                    "content_rating": ContentRating.objects.get_or_create(rating=response['contentRating'])[0].id if response['contentRating'] else None,
                     "time":response['runtimeMins'] if response['type'] == 'Movie' else None,
                     "time_string":response['runtimeStr'] if response['type'] == 'Movie' else None
                 })
@@ -169,3 +169,4 @@ class CountryViewSet(ModelViewSet):
     queryset = Country.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = CountrySerializer
+    lookup_field = 'name'
