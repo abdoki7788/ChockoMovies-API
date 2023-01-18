@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import MovieIdSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer
+from .serializers import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
 from .models import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
@@ -14,7 +14,7 @@ from utils.api_calls import get_movie_by_id
 class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all()
     permission_classes = [IsAdminOrReadOnly]
-    serializer_class = MovieSerializer
+    serializer_class = MovieDetailSerializer
     filter_backends = [SearchFilter ,DjangoFilterBackend, OrderingFilter]
     search_fields = ['title', 'full_title']
     filterset_fields = ['genres', 'actors', 'countries', 'companies']
@@ -28,6 +28,8 @@ class MovieViewSet(ModelViewSet):
     def get_serializer_class(self, *args, **kwargs):
         if self.action == 'imdb_create':
             self.serializer_class = MovieIdSerializer
+        elif self.action == 'list':
+            self.serializer_class = MovieListSerializer
         return super().get_serializer_class(*args, **kwargs)
 
     @action(methods=['GET', 'POST'], detail=True)
@@ -83,7 +85,7 @@ class MovieViewSet(ModelViewSet):
                     countryList.append(Country.objects.get_or_create(name=country['key'], display_name=country['value'])[0].id)
                 for director in response['directorList']:
                     directorList.append(Director.objects.get_or_create(id=director['id'], name=director['id'])[0].id)
-                movie_create_data = MovieSerializer(data={
+                movie_create_data = MovieCreateSerializer(data={
                     "id":response['id'],
                     "title":response['title'],
                     "full_title":response['fullTitle'],
@@ -116,6 +118,13 @@ class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = GenreSerializer
+    lookup_field = 'slug'
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            self.serializer_class = GenreListSerializer
+        return super().get_serializer_class()
+
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
