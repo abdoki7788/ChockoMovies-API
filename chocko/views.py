@@ -45,7 +45,7 @@ class MovieViewSet(ModelViewSet):
                 serialized_data.save()
                 return Response(serialized_data.data)
             else:
-                return Response(serialized_data.errors)
+                return Response(serialized_data.errors, status=400)
     
     @action(methods=['post'], detail=True)
     def save(self, request, pk):
@@ -111,7 +111,7 @@ class MovieViewSet(ModelViewSet):
                 else:
                     return Response(movie_create_data.errors, status=400)
         else:
-            return Response(seralized_data.errors)
+            return Response(seralized_data.errors, status=400)
 
 
 class GenreViewSet(ModelViewSet):
