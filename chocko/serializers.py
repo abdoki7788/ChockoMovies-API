@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from accounts.serializers import CurrentUserSerializer
 from .models import Movie, Actor, Genre, Comment, Group, Ticket, Country, Request, Company
 
 class ActorSerializer(serializers.ModelSerializer):
@@ -8,6 +9,7 @@ class ActorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     likes_count = serializers.IntegerField(source='get_likes_count', read_only=True)
+    author = CurrentUserSerializer()
     class Meta:
         model = Comment
         fields = ['id','author', 'target', 'content', 'send_date', 'likes_count']
