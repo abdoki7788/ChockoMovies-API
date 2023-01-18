@@ -17,7 +17,7 @@ class MovieViewSet(ModelViewSet):
     serializer_class = MovieDetailSerializer
     filter_backends = [SearchFilter ,DjangoFilterBackend, OrderingFilter]
     search_fields = ['title', 'full_title']
-    filterset_fields = ['genres', 'actors', 'countries', 'companies']
+    filterset_fields = ['genres', 'actors', 'countries', 'companies', 'content_rating', 'type']
     ordering_fields = ['realease_date', 'imdb_rating']
 
     def get_permissions(self):
@@ -48,14 +48,14 @@ class MovieViewSet(ModelViewSet):
                 return Response(serialized_data.errors)
     
     @action(methods=['post'], detail=True)
-    def save(self, request, id):
+    def save(self, request, pk):
         obj = self.get_object()
         obj.saves.add(request.user)
         obj.save()
         return Response({'datail': 'successfuly saved'})
     
     @action(methods=['post'], detail=True)
-    def unsave(self, request, id):
+    def unsave(self, request, pk):
         obj = self.get_object()
         obj.saves.remove(request.user)
         obj.save()
