@@ -13,22 +13,9 @@ class MovieIdSerializer(serializers.Serializer):
     id = serializers.CharField()
 
 class MovieSerializer(serializers.ModelSerializer):
-    genres = MovieGenreSerializer(many=True)
     class Meta:
         model = Movie
         fields = '__all__'
-    
-    def save(self, **kwargs):
-        genres = self.validated_data['genres']
-        genre_list = []
-        for genre in genres:
-            try:
-                obj = Genre.objects.get(**dict(genre))
-            except Genre.DoesNotExist:
-                obj = Genre.objects.create(**dict(genre))
-            genre_list.append(obj)
-        self.validated_data['genres'] = genre_list
-        return super().save(**kwargs)
 
 class MovieListSerializer(serializers.ModelSerializer):
     genres = serializers.StringRelatedField(many=True, read_only=True)

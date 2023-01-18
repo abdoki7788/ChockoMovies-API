@@ -18,7 +18,6 @@ class Actor(models.Model):
 class Director(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=50)
-    image = models.URLField()
 
     def __str__(self) -> str:
         return self.name
@@ -71,17 +70,16 @@ class Movie(models.Model):
     type = models.CharField(max_length=1, choices=TYPE_CHOICES, default='U')
     release_date = models.DateField()
     plot = models.TextField()
-    stars = models.ManyToManyField(Actor, blank=True)
-    actors = models.ManyToManyField(Actor, blank=True, related_name='movies')
-    genres = models.ManyToManyField(Genre, blank=True, related_name='movie_items')
-    companies = models.ManyToManyField(Company, blank=True, related_name='movies')
-    countries = models.ManyToManyField(Country, blank=True, related_name='movies')
-    director = models.ManyToManyField(Director, blank=True, related_name='movies')
+    actors = models.ManyToManyField(Actor, blank=True, related_name='works')
+    genres = models.ManyToManyField(Genre, blank=True, related_name='items')
+    companies = models.ManyToManyField(Company, blank=True, related_name='works')
+    countries = models.ManyToManyField(Country, blank=True, related_name='items')
+    directors = models.ManyToManyField(Director, blank=True, related_name='works')
     imdb_rating = models.DecimalField(max_digits=2, decimal_places=1)
     votes_count = models.IntegerField(blank=True, null=True)
     image = models.URLField(blank=True)
-    trailer = models.URLField(blank=True)
-    time = models.IntegerField()
+    trailer = models.URLField(blank=True, null=True)
+    time = models.IntegerField(null=True)
     time_string = models.CharField(max_length=20, null=True, blank=True)
     content_rating = models.ForeignKey(ContentRating, related_name='movies', on_delete=models.SET_NULL, null=True)
     saves = models.ManyToManyField(User, blank=True, related_name='saved_movies')

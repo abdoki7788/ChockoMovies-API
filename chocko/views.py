@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import MovieIdSerializer, MovieSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer
-from .models import Movie, Genre, Comment, Group, Ticket, Country, Request
+from .models import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
 
@@ -63,15 +63,51 @@ class MovieViewSet(ModelViewSet):
     def imdb_create(self, request):
         seralized_data = self.get_serializer_class()(data=request.data)
         if seralized_data.is_valid():
-            try:
-                response = get_movie_by_id(seralized_data.data['id'])
-                if response['errorMessage']:
-                    err = response['errorMessage']
-                    return Response({'detail': f'there is a problem :{ err }'}, status=400)
-                print(response)
-                return Response(seralized_data.data)
-            except:
-                return Response({"something is wrong. "}, status=500)
+            response = get_movie_by_id(seralized_data.data['id'])
+            if response['errorMessage']:
+                err = response['errorMessage']
+                return Response({'detail': f'مشکلی پیش آمده . لطفا اطلاعات وارد شده را چک کنید :{ err }'}, status=400)
+            else:
+                actorList = []
+                genreList = []
+                companyList = []
+                countryList = []
+                directorList = []
+                for actor in response['actorList']:
+                    actorList.append(Actor.objects.get_or_create(id=actor['id'], name=actor['name'], image=actor['image'])[0].id)
+                for genre in response['genreList']:
+                    genreList.append(Genre.objects.get_or_create(name=genre['key'], display_name=genre['value'])[0].id)
+                for company in response['companyList']:
+                    companyList.append(Company.objects.get_or_create(id=company['id'], name=company['name'])[0].id)
+                for country in response['countryList']:
+                    countryList.append(Country.objects.get_or_create(name=country['key'], display_name=country['value'])[0].id)
+                for director in response['directorList']:
+                    directorList.append(Director.objects.get_or_create(id=director['id'], name=director['id'])[0].id)
+                movie_create_data = MovieSerializer(data={
+                    "id":response['id'],
+                    "title":response['title'],
+                    "full_title":response['fullTitle'],
+                    "type":'S' if response['type']=='TVSeries' else 'M',
+                    "release_date":response['releaseDate'],
+                    "plot":response['plotLocal'] if response['plotLocalIsRtl'] else response['plot'],
+                    "actors":actorList,
+                    "genres":genreList,
+                    "companies":companyList,
+                    "countries":countryList,
+                    "directors":directorList,
+                    "imdb_rating":response['imDbRating'],
+                    "votes_count":response['imDbRatingVotes'],
+                    "image":response['image'],
+                    "trailer":response['trailer']['linkEmbed'] if not response['trailer']['errorMessage'] else None,
+                    "content_rating": ContentRating.objects.get_or_create(rating=response['contentRating'])[0].id,
+                    "time":response['runtimeMins'] if response['type'] == 'Movie' else None,
+                    "time_string":response['runtimeStr'] if response['type'] == 'Movie' else None
+                })
+                if movie_create_data.is_valid():
+                    movie_create_data.save()
+                    return Response(movie_create_data.data)
+                else:
+                    return Response(movie_create_data.errors, status=400)
         else:
             return Response(seralized_data.errors)
 
