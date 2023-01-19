@@ -59,6 +59,8 @@ class Country(models.Model):
             self.display_name = self.name
         return super().save(*args, **kwargs)
 
+class IPAddress(models.Model):
+    address = models.GenericIPAddressField()
 
 class Movie(models.Model):
     TYPE_CHOICES = (
@@ -79,10 +81,11 @@ class Movie(models.Model):
     votes_count = models.IntegerField(blank=True, null=True)
     image = models.URLField(blank=True)
     trailer = models.URLField(blank=True, null=True)
-    time = models.IntegerField(null=True)
+    time = models.IntegerField(null=True, blank=True)
     time_string = models.CharField(max_length=20, null=True, blank=True)
     content_rating = models.ForeignKey(ContentRating, related_name='movies', on_delete=models.SET_NULL, null=True)
     saves = models.ManyToManyField(User, blank=True, related_name='saved_movies')
+    hits = models.ManyToManyField(IPAddress, blank=True, related_name='movie')
 
     def __str__(self) -> str:
         return self.full_title

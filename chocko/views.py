@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
-from .models import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating
+from .models import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating, IPAddress
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
 from utils.api_calls import get_movie_by_id
 
@@ -31,6 +31,15 @@ class MovieViewSet(ModelViewSet):
         elif self.action == 'list':
             self.serializer_class = MovieListSerializer
         return super().get_serializer_class(*args, **kwargs)
+
+    def retrieve(self, request, pk):
+        instance = self.get_object()
+        is_visit = self.request.query_params.get('hit')
+        if is_visit:
+            ip_obj, created = IPAddress.objects.get_or_create(address=request.META['REMOTE_ADDR'])
+            instance.hits.add(ip_obj)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     @action(methods=['GET', 'POST'], detail=True)
     def comments(self, request, pk):

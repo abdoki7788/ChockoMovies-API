@@ -64,9 +64,10 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     countries = CountrySerializer(many=True)
     type = serializers.CharField(source='get_type_display')
     saves_count = serializers.IntegerField(source='saves.count')
+    hits_count = serializers.IntegerField(source='hits.count')
     class Meta:
         model = Movie
-        fields = ["id", "title", "full_title", "type", "release_date", "plot", "imdb_rating", "votes_count", "image", "trailer", "time", "time_string", "content_rating", "actors", "genres", "companies", "countries", "directors", "saves_count"]
+        fields = ["id", "title", "full_title", "type", "release_date", "plot", "imdb_rating", "votes_count", "image", "trailer", "time", "time_string", "content_rating", "actors", "genres", "companies", "countries", "directors", "saves_count", "hits_count"]
 
 class GroupSerializer(serializers.ModelSerializer):
     items = MovieListSerializer(many=True)
