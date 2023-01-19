@@ -8,7 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
 from .models import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating, IPAddress
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly, IsAdminOrAuthenticatedCreateOnly
 from utils.api_calls import get_movie_by_id
 
 class MovieViewSet(ModelViewSet):
@@ -162,7 +162,7 @@ class TicketView(ListCreateAPIView):
 
 class ResquestView(ListCreateAPIView):
     queryset = Request.objects.all()
-    permission_classes = [IsAdminOrCreateOnly]
+    permission_classes = [IsAdminOrAuthenticatedCreateOnly]
     serializer_class = RequestSerializer
 
     def create(self, request, *args, **kwargs):
