@@ -1,11 +1,12 @@
+#### imports
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from djoser.views import UserViewSet
+
 from .permissions import IsCurrentUserOrAdmin
 from chocko.serializers import MovieListSerializer, CommentSerializer
-
-# Create your views here.
+####
 
 class CustomUserViewSet(UserViewSet):
 

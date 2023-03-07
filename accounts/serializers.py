@@ -1,7 +1,9 @@
-from rest_framework import serializers
+#### imports
 from djoser.serializers import UserSerializer
-from .models import User
 from djoser.conf import settings
+
+from .models import User
+####
 
 class CurrentUserSerializer(UserSerializer):
     class Meta:

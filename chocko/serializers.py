@@ -1,6 +1,9 @@
+#### imports
 from rest_framework import serializers
+
 from accounts.serializers import CurrentUserSerializer
 from .models import Movie, Actor, Genre, Comment, Group, Ticket, Country, Request, Company
+####
 
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
