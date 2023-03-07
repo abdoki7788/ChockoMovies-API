@@ -1,0 +1,9 @@
+{
+    "app": "chocko-api",
+    "disks": [
+        {
+            "name": "sqlite",
+            "mountTo": "data"
+        }
+    ]
+}
