@@ -7,7 +7,7 @@ from rest_framework.permissions    import IsAuthenticated
 from rest_framework.filters        import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializers    import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, GroupSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
+from .serializers    import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, GroupSerializer, GroupCreateSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
 from .models         import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating, IPAddress
 from .permissions    import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly, IsAdminOrAuthenticatedCreateOnly
 from utils.api_calls import get_movie_by_id
@@ -155,6 +155,11 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = GroupSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return GroupCreateSerializer
+        return self.serializer_class
 
 class TicketView(ListCreateAPIView):
     queryset = Ticket.objects.all()

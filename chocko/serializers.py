@@ -78,6 +78,11 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = '__all__'
 
+class GroupCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('title', 'slug', 'items')
+
 
 class GenreSerializer(serializers.ModelSerializer):
     items = MovieListSerializer(many=True)

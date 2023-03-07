@@ -106,8 +106,14 @@ class Comment(models.Model):
         return f'{self.author.username} on {self.target.movieid} at {self.send_date}'
 
 class Group(models.Model):
-    title = models.CharField(max_length=50)
-    items = models.ManyToManyField(Movie, related_name='added_groups')
+    title = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(null=True, blank=True, unique=True, allow_unicode=True)
+    items = models.ManyToManyField(Movie, related_name='added_groups', blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.title
