@@ -18,7 +18,7 @@ class IsAuthorOrReadOnly(BasePermission):
 
 class IsAdminOrCreateOnly(BasePermission):
     def has_permission(self, request, view):
-        if request.user.is_authenticated and (request.action == 'create' or request.user.is_superuser):
+        if request.user.is_authenticated and (request.method == 'post' or request.user.is_superuser):
             return True
         return False
 
