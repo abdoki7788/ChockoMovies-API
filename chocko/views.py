@@ -155,7 +155,7 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = GroupSerializer
-
+    lookup_field = 'slug'
     def get_serializer_class(self):
         if self.action == 'create':
             return GroupCreateSerializer

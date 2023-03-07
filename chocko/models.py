@@ -72,7 +72,7 @@ class Movie(models.Model):
     full_title = models.CharField(max_length=100)
     type = models.CharField(max_length=1, choices=TYPE_CHOICES, default='U')
     release_date = models.DateField()
-    plot = models.TextField()
+    plot = models.TextField(blank=True)
     actors = models.ManyToManyField(Actor, blank=True, related_name='works')
     genres = models.ManyToManyField(Genre, blank=True, related_name='items')
     companies = models.ManyToManyField(Company, blank=True, related_name='works')
