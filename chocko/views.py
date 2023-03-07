@@ -4,6 +4,7 @@ from rest_framework.generics       import ListCreateAPIView
 from rest_framework.decorators     import action
 from rest_framework.response       import Response
 from rest_framework.permissions    import IsAuthenticated
+from rest_framework.pagination     import PageNumberPagination
 from rest_framework.filters        import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -13,6 +14,22 @@ from .permissions    import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCrea
 from utils.api_calls import get_movie_by_id
 ####
 
+#@#@ pagination Classes
+class MovieListPagination(PageNumberPagination):
+    page_size = 40
+    page_size_query_param = 'page_size'
+    max_page_size = 500
+    def get_paginated_response(self, data):
+        return Response({
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'count': self.page.paginator.count,
+            'total': self.page.paginator.num_pages,
+            'results': data
+        })
+#@#@
+
+
 class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all()
     permission_classes = [IsAdminOrReadOnly]
@@ -21,6 +38,7 @@ class MovieViewSet(ModelViewSet):
     search_fields = ['title', 'full_title']
     filterset_fields = ['genres', 'actors', 'countries', 'companies', 'content_rating', 'type']
     ordering_fields = ['realease_date', 'imdb_rating']
+    pagination_class = MovieListPagination
 
     def get_permissions(self):
         if self.action in ['save', 'unsave', 'comments']:
@@ -139,7 +157,7 @@ class GenreViewSet(ModelViewSet):
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAdminOrCreateOnly]
     serializer_class = CommentSerializer
     filterset_fields = ['target']
     ordering = ['send_date']
