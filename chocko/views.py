@@ -8,7 +8,7 @@ from rest_framework.pagination     import PageNumberPagination
 from rest_framework.filters        import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializers    import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, GroupSerializer, GroupCreateSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
+from .serializers    import MovieIdSerializer, MovieCreateSerializer, MovieDetailSerializer, GenreListSerializer, GenreSerializer, CommentSerializer, CommentCreateSerializer, GroupSerializer, GroupCreateSerializer, TicketSerializer, CountrySerializer, RequestSerializer, MovieListSerializer
 from .models         import Movie, Genre, Comment, Group, Ticket, Country, Request, Actor, Company, Director, ContentRating, IPAddress
 from .permissions    import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsAdminOrCreateOnly, IsAdminOrAuthenticatedCreateOnly
 from utils.api_calls import get_movie_by_id
@@ -67,7 +67,7 @@ class MovieViewSet(ModelViewSet):
         if request.method.lower() == 'get':
             return Response(CommentSerializer(obj.comments, many=True).data)
         else:
-            serialized_data = CommentSerializer(data=request.data)
+            serialized_data = CommentCreateSerializer(data=request.data)
             if serialized_data.is_valid():
                 serialized_data.validated_data['author'] = request.user
                 serialized_data.validated_data['target'] = obj

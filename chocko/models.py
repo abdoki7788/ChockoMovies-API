@@ -103,7 +103,7 @@ class Comment(models.Model):
         return self.likes.count()
     
     def __str__(self) -> str:
-        return f'{self.author.username} on {self.target.movieid} at {self.send_date}'
+        return f'{self.author.username} on {self.target.id} at {self.send_date}'
 
 class Group(models.Model):
     title = models.CharField(max_length=50, unique=True)
@@ -130,7 +130,7 @@ class Ticket(models.Model):
 
 class Request(models.Model):
     TYPE_CHOICES = (('S', 'serie'), ('M', 'movie'))
-    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name='requested_movies')
     type = models.CharField(max_length=1, choices=TYPE_CHOICES, default='M')
     name = models.CharField(max_length=50)
     imdb_id = models.CharField(max_length=20, null=True)

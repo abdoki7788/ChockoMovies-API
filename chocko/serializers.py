@@ -10,13 +10,18 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = '__all__'
 
+class CommentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['content']
+
 class CommentSerializer(serializers.ModelSerializer):
     likes_count = serializers.IntegerField(source='get_likes_count', read_only=True)
     author = CurrentUserSerializer()
     class Meta:
         model = Comment
         fields = ['id','author', 'target', 'content', 'send_date', 'likes_count']
-        extra_kwargs = {'author': {'read_only': True}, 'target': {'required': False}}
+        extra_kwargs = {'author': {'required': False}, 'target': {'required': False}}
 
 class GenreListSerializer(serializers.ModelSerializer):
     class Meta:
